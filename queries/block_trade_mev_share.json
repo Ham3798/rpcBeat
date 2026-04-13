@@ -1,0 +1,20 @@
+{
+  "name": "RPCBeat - Block Trade MEV Share",
+  "description": "Hourly share of BNB blocks with no trades, trades, or MEV-marked trades.",
+  "parameters": [
+    {
+      "key": "start_time",
+      "value": "2026-04-12T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": ["hour", "category", "block_count"],
+  "non_negative_columns": ["block_count"],
+  "percentage_columns": [],
+  "tags": ["rpcbeat", "bnb", "blocks", "mev"]
+}

@@ -1,0 +1,2 @@
+"""RPCBeat CLI package."""
+

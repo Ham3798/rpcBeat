@@ -1,0 +1,33 @@
+{
+  "name": "RPCBeat - Transaction Execution Context",
+  "description": "Transaction-level BNB DEX trade classification and builder context.",
+  "parameters": [
+    {
+      "key": "tx_hash",
+      "value": "0xa1930dba73d2043a105cb50695b3276971283a84cacd87a94fd1c6b39d9dcfdf",
+      "type": "text"
+    },
+    {
+      "key": "start_time",
+      "value": "2026-04-12T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "block_time",
+    "block_number",
+    "tx_hash",
+    "classification",
+    "amount_usd",
+    "validator_address",
+    "validator_confidence"
+  ],
+  "non_negative_columns": ["amount_usd"],
+  "percentage_columns": [],
+  "tags": ["rpcbeat", "bnb", "tx", "mev"]
+}

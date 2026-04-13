@@ -1,0 +1,41 @@
+{
+  "name": "RPCBeat - Pair Token Risk",
+  "description": "Historical BNB sandwiched exposure by token pair or token address.",
+  "parameters": [
+    {
+      "key": "start_time",
+      "value": "2026-04-06T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "token_pair_or_addresses",
+      "value": "WBNB",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "token_pair",
+    "sandwiched_volume",
+    "sandwiched_volume_percentage",
+    "sandwiched_transactions",
+    "sandwiched_transactions_percentage",
+    "sandwiched_traders",
+    "sandwiched_traders_percentage"
+  ],
+  "non_negative_columns": [
+    "sandwiched_volume",
+    "sandwiched_transactions",
+    "sandwiched_traders"
+  ],
+  "percentage_columns": [
+    "sandwiched_volume_percentage",
+    "sandwiched_transactions_percentage",
+    "sandwiched_traders_percentage"
+  ],
+  "tags": ["rpcbeat", "bnb", "pair", "token", "mev"]
+}

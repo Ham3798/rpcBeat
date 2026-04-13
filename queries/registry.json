@@ -1,0 +1,34 @@
+{
+  "queries": {
+    "block_trade_mev_share": {
+      "name": "RPCBeat - Block Trade MEV Share",
+      "path": "queries/block_trade_mev_share.sql",
+      "query_id": 6989263
+    },
+    "builder_sandwich_exposure": {
+      "name": "RPCBeat - Builder Sandwich Exposure",
+      "path": "queries/builder_sandwich_exposure.sql",
+      "query_id": 6989264
+    },
+    "emerging_sandwich_type2": {
+      "name": "RPCBeat - Emerging Sandwich Type 2",
+      "path": "queries/emerging_sandwich_type2.sql",
+      "query_id": 6989265
+    },
+    "pair_token_risk": {
+      "name": "RPCBeat - Pair Token Risk",
+      "path": "queries/pair_token_risk.sql",
+      "query_id": 6989266
+    },
+    "tx_execution_context": {
+      "name": "RPCBeat - Transaction Execution Context",
+      "path": "queries/tx_execution_context.sql",
+      "query_id": 6989267
+    },
+    "wallet_mev_exposure": {
+      "name": "RPCBeat - Wallet MEV Exposure",
+      "path": "queries/wallet_mev_exposure.sql",
+      "query_id": 6989268
+    }
+  }
+}

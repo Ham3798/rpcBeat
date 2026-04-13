@@ -1,0 +1,32 @@
+{
+  "name": "RPCBeat - Builder Sandwich Exposure",
+  "description": "Builder-level hourly sandwich and sandwiched transaction exposure on BNB.",
+  "parameters": [
+    {
+      "key": "start_time",
+      "value": "2026-04-12T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "hour",
+    "builder_brand",
+    "validator_address",
+    "validator_confidence",
+    "sandwich_tx_count",
+    "sandwiched_tx_count",
+    "affected_blocks"
+  ],
+  "non_negative_columns": [
+    "sandwich_tx_count",
+    "sandwiched_tx_count",
+    "affected_blocks"
+  ],
+  "percentage_columns": [],
+  "tags": ["rpcbeat", "bnb", "builder", "mev"]
+}

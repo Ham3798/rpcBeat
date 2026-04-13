@@ -1,0 +1,29 @@
+{
+  "block_trade_mev_share": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-12T00:00:00+00:00"
+  },
+  "builder_sandwich_exposure": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-12T00:00:00+00:00"
+  },
+  "emerging_sandwich_type2": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-12T00:00:00+00:00"
+  },
+  "pair_token_risk": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-06T00:00:00+00:00",
+    "token_pair_or_addresses": "WBNB"
+  },
+  "tx_execution_context": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-12T00:00:00+00:00",
+    "tx_hash": "0xa1930dba73d2043a105cb50695b3276971283a84cacd87a94fd1c6b39d9dcfdf"
+  },
+  "wallet_mev_exposure": {
+    "end_time": "2026-04-13T00:00:00+00:00",
+    "start_time": "2026-04-06T00:00:00+00:00",
+    "wallet": "0x5789bcec98243e025d83039f3203b8a7e788e226"
+  }
+}
