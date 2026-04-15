@@ -4,7 +4,8 @@
   <img src="Image/rpcBeat.png" alt="RPCBeat logo" width="360">
 </p>
 
-RPCBeat is a trust-minimizing execution context layer for toxic orderflow on BNB.
+RPCBeat is an ERC-8004-registered, trust-minimizing execution context layer for
+toxic orderflow on BNB.
 
 It does not ask wallets or agents to blindly trust private RPCs, builder paths, or
 opaque routing claims. Instead, RPCBeat turns observed BNB execution outcomes into
@@ -16,12 +17,20 @@ pair pressure. Validator/proposer context is exposed conservatively as block-lev
 The goal is simple: agents should inspect execution evidence before deciding how
 to route or explain a swap.
 
+For the BNB Chain hackathon, RPCBeat is registered through the official
+ERC-8004 Identity Registry on BSC Testnet. The on-chain registration points to
+the live API, Dune dashboard, GitHub repo, and MCP-ready agent metadata.
+
 ## Live Demo
 
 - API: <https://rpcbeat-api.onrender.com>
 - API docs: <https://rpcbeat-api.onrender.com/docs>
 - Dune dashboard:
   <https://dune.com/ham37988/rpcbeat-bnb-toxic-orderflow-context>
+- ERC-8004 agent metadata:
+  <https://raw.githubusercontent.com/Ham3798/rpcBeat/main/agent/rpcbeat-agent.json>
+- BSC Testnet agent registration:
+  <https://testnet.bscscan.com/tx/0x3a6c79afab6dd9b694b476a18169ec976276e09285c32166c784159b070881a6>
 
 Verified demo endpoints:
 
@@ -59,12 +68,12 @@ RPCBeat separates evidence into four confidence tiers:
 - Surfaces pool and pair-level sandwich pressure for route advisory.
 - Exposes FastAPI and MCP tools so agents can reason over structured evidence.
 
-## BNB Agent Registration
+## ERC-8004 Registration On BNB
 
-RPCBeat includes a minimal ERC-8004-compatible registration path for BNB track
-submission proof. The heavy execution analysis stays off-chain in the API and
-Dune queries, while the agent identity and a compact demo analysis reference can
-be recorded through the official ERC-8004 Identity Registry on BSC Testnet.
+RPCBeat uses the official ERC-8004 Identity Registry on BSC Testnet for BNB
+track submission proof. The heavy execution analysis stays off-chain in the API
+and Dune queries, while the agent identity and a compact demo analysis reference
+are recorded on-chain.
 
 Current BSC Testnet proof:
 
@@ -106,7 +115,7 @@ forge script script/SetRPCBeatDemoMetadata.s.sol:SetRPCBeatDemoMetadata \
 
 This is identity and execution-context attestation material only. It is not a
 claim of exact RPC attribution, guaranteed route safety, full ERC-8004 reputation
-integration, or validator causality.
+or validation registry integration, or validator causality.
 
 ## Dune Baseline
 
