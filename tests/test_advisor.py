@@ -116,11 +116,27 @@ def test_analyze_wallet_keeps_partial_context_when_optional_queries_fail() -> No
 def test_analyze_execution_includes_validator_block_context() -> None:
     result = AdvisorService(FakeRunner()).analyze_execution("0xtx")
 
+    assert result.block_time is not None
+    assert result.block_time.isoformat() == "2026-04-13T00:00:00+00:00"
     assert result.route_class == "dex_router_or_aggregator"
     assert result.validator_address == "0xvalidator"
     assert result.validator_role_label == "block_miner_or_proposer"
     assert result.validator_attribution_basis == "bnb.blocks.miner"
     assert result.validator_confidence == "attributed"
+
+
+def test_analyze_execution_accepts_dune_utc_timestamp_format() -> None:
+    class DuneTimestampRunner(FakeRunner):
+        def execute_registered_query(self, key: str, parameters: dict[str, Any], *, max_rows=None):
+            rows = super().execute_registered_query(key, parameters, max_rows=max_rows)
+            if key == "tx_execution_context":
+                rows[0]["block_time"] = "2026-04-12 07:56:11.000 UTC"
+            return rows
+
+    result = AdvisorService(DuneTimestampRunner()).analyze_execution("0xtx")
+
+    assert result.block_time is not None
+    assert result.block_time.isoformat() == "2026-04-12T07:56:11+00:00"
 
 
 def test_explain_execution_uses_classification() -> None:

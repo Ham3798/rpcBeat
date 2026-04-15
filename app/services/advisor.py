@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any
 
 from app.models import (
@@ -150,7 +151,7 @@ class AdvisorService:
             tx_hash=tx_hash,
             classification=classification,
             block_number=maybe_int(row.get("block_number")),
-            block_time=row.get("block_time"),
+            block_time=parse_dune_datetime(row.get("block_time")),
             route_class=row.get("route_class"),
             builder_brand=row.get("builder_brand"),
             validator_address=row.get("validator_address"),
@@ -336,6 +337,25 @@ def maybe_int(value: Any) -> int | None:
     if value is None:
         return None
     return int(value)
+
+
+def parse_dune_datetime(value: Any) -> datetime | None:
+    if value is None or isinstance(value, datetime):
+        return value
+    text = str(value).strip()
+    if not text:
+        return None
+    if text.endswith(" UTC"):
+        timestamp = text.removesuffix(" UTC")
+        for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):
+            try:
+                return datetime.strptime(timestamp, fmt).replace(tzinfo=UTC)
+            except ValueError:
+                continue
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def execution_risk_level(classification: str) -> RiskLevel:
