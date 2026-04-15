@@ -12,6 +12,23 @@ pair pressure. Validator/proposer context is exposed conservatively as block-lev
 The goal is simple: agents should inspect execution evidence before deciding how
 to route or explain a swap.
 
+## Live Demo
+
+- API: <https://rpcbeat-api.onrender.com>
+- API docs: <https://rpcbeat-api.onrender.com/docs>
+- Dune dashboard:
+  <https://dune.com/ham37988/rpcbeat-bnb-toxic-orderflow-context>
+
+Verified demo endpoints:
+
+```bash
+curl https://rpcbeat-api.onrender.com/health
+
+curl https://rpcbeat-api.onrender.com/wallet/0x5789bcec98243e025d83039f3203b8a7e788e226
+
+curl https://rpcbeat-api.onrender.com/tx/0xa1930dba73d2043a105cb50695b3276971283a84cacd87a94fd1c6b39d9dcfdf
+```
+
 | Before | With RPCBeat |
 |---|---|
 | Trust private paths | Inspect execution evidence |
@@ -89,14 +106,15 @@ Core endpoints:
 Demo examples:
 
 ```bash
+export RPCBEAT_API_URL="https://rpcbeat-api.onrender.com"
+
 curl "$RPCBEAT_API_URL/health"
-
 curl "$RPCBEAT_API_URL/wallet/0x5789bcec98243e025d83039f3203b8a7e788e226"
-
 curl "$RPCBEAT_API_URL/tx/0xa1930dba73d2043a105cb50695b3276971283a84cacd87a94fd1c6b39d9dcfdf"
 ```
 
-Replace `RPCBEAT_API_URL` with the deployed Render URL.
+The root path `/` is intentionally not an API endpoint. Use `/health`, `/docs`,
+or the endpoint paths above.
 
 ## Deploy On Render
 
@@ -124,12 +142,8 @@ RPCBEAT_DEFAULT_LOOKBACK_DAYS=30
 RPCBEAT_MAX_RESULT_ROWS=5000
 ```
 
-The Dune dashboard URL can be added to this README after the public dashboard is
-curated:
-
-```text
-Dune Dashboard: https://dune.com/<workspace>/<dashboard>
-```
+Current public dashboard:
+<https://dune.com/ham37988/rpcbeat-bnb-toxic-orderflow-context>.
 
 ## CLI Feedback Loop
 
