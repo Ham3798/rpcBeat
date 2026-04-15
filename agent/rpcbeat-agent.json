@@ -1,0 +1,53 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "RPCBeat",
+  "description": "BNB execution safety agent that turns wallet and transaction execution outcomes into toxic orderflow context for AI agents.",
+  "image": "https://raw.githubusercontent.com/Ham3798/rpcBeat/main/Image/rpcBeat.png",
+  "services": [
+    {
+      "name": "web",
+      "endpoint": "https://github.com/Ham3798/rpcBeat",
+      "version": "0.1.0"
+    },
+    {
+      "name": "api",
+      "endpoint": "https://rpcbeat-api.onrender.com",
+      "version": "0.1.0"
+    },
+    {
+      "name": "openapi",
+      "endpoint": "https://rpcbeat-api.onrender.com/docs",
+      "version": "0.1.0"
+    },
+    {
+      "name": "dune-dashboard",
+      "endpoint": "https://dune.com/ham37988/rpcbeat-bnb-toxic-orderflow-context",
+      "version": "0.1.0"
+    },
+    {
+      "name": "MCP",
+      "endpoint": "local:python -m app.mcp_server",
+      "version": "2025-06-18"
+    }
+  ],
+  "x402Support": false,
+  "active": true,
+  "supportedTrust": [
+    "identity",
+    "execution-context-attestation"
+  ],
+  "capabilities": [
+    "analyze_wallet",
+    "analyze_execution",
+    "explain_execution",
+    "get_builder_mev_exposure",
+    "get_pair_risk",
+    "recommend_route"
+  ],
+  "limitations": [
+    "RPC provider identity is not directly observed from public BNB data.",
+    "Private relay admission and builder proxy latency are not directly observed.",
+    "Affected notional is not counterfactual realized loss.",
+    "Validator/proposer context is block-level attribution and not intent or causality."
+  ]
+}

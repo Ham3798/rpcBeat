@@ -27,3 +27,8 @@ evals/runs/
 evals/improvement_prompt.md
 
 queries/archive/
+
+# Foundry outputs
+contracts/erc8004/out/
+contracts/erc8004/cache/
+contracts/erc8004/broadcast/

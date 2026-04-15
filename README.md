@@ -59,6 +59,40 @@ RPCBeat separates evidence into four confidence tiers:
 - Surfaces pool and pair-level sandwich pressure for route advisory.
 - Exposes FastAPI and MCP tools so agents can reason over structured evidence.
 
+## BNB Agent Registration
+
+RPCBeat includes a minimal ERC-8004-compatible registration path for BNB track
+submission proof. The heavy execution analysis stays off-chain in the API and
+Dune queries, while the agent identity and a compact demo analysis reference can
+be recorded through the official ERC-8004 Identity Registry on BSC Testnet.
+
+Agent metadata:
+<https://raw.githubusercontent.com/Ham3798/rpcBeat/main/agent/rpcbeat-agent.json>
+
+Foundry scripts live in `contracts/erc8004/`:
+
+```bash
+cd contracts/erc8004
+forge build
+forge test
+
+forge script script/RegisterRPCBeatAgent.s.sol:RegisterRPCBeatAgent \
+  --rpc-url "$BSC_TESTNET_RPC_URL" \
+  --private-key "$BSC_TESTNET_PRIVATE_KEY" \
+  --broadcast
+
+export RPCBEAT_AGENT_ID="..."
+
+forge script script/SetRPCBeatDemoMetadata.s.sol:SetRPCBeatDemoMetadata \
+  --rpc-url "$BSC_TESTNET_RPC_URL" \
+  --private-key "$BSC_TESTNET_PRIVATE_KEY" \
+  --broadcast
+```
+
+This is identity and execution-context attestation material only. It is not a
+claim of exact RPC attribution, guaranteed route safety, full ERC-8004 reputation
+integration, or validator causality.
+
 ## Dune Baseline
 
 The hackathon baseline uses:
