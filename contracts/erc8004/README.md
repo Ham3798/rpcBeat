@@ -20,6 +20,21 @@ validation registry integration for the hackathon demo.
 https://raw.githubusercontent.com/Ham3798/rpcBeat/main/agent/rpcbeat-agent.json
 ```
 
+## Current BSC Testnet Proof
+
+- Agent ID: `610`
+- Registration tx:
+  `0x3a6c79afab6dd9b694b476a18169ec976276e09285c32166c784159b070881a6`
+- Demo metadata tx:
+  `0x5da35db5c621b198fdae9489b05bf0828152a444c5d5c6fb6aa462f443de5dac`
+- Metadata key: `rpcbeat.analysis.demo`
+- Registration block: `101845220`
+- Metadata block: `101845333`
+
+Readback was checked on BSC Testnet with two public RPC endpoints. `tokenURI(610)`
+returns the RPCBeat agent URI, and `getMetadata(610, "rpcbeat.analysis.demo")`
+returns the compact demo wallet/tx analysis reference.
+
 ## Environment
 
 ```bash
@@ -80,4 +95,3 @@ cast call "$ERC8004_IDENTITY_REGISTRY" \
   "rpcbeat.analysis.demo" \
   --rpc-url "$BSC_TESTNET_RPC_URL"
 ```
-

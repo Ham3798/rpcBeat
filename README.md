@@ -66,6 +66,21 @@ submission proof. The heavy execution analysis stays off-chain in the API and
 Dune queries, while the agent identity and a compact demo analysis reference can
 be recorded through the official ERC-8004 Identity Registry on BSC Testnet.
 
+Current BSC Testnet proof:
+
+- IdentityRegistry:
+  [`0x8004A818BFB912233c491871b3d84c89A494BD9e`](https://testnet.bscscan.com/address/0x8004A818BFB912233c491871b3d84c89A494BD9e)
+- Agent ID: `610`
+- Agent registration tx:
+  [`0x3a6c79afab6dd9b694b476a18169ec976276e09285c32166c784159b070881a6`](https://testnet.bscscan.com/tx/0x3a6c79afab6dd9b694b476a18169ec976276e09285c32166c784159b070881a6)
+- Demo metadata tx:
+  [`0x5da35db5c621b198fdae9489b05bf0828152a444c5d5c6fb6aa462f443de5dac`](https://testnet.bscscan.com/tx/0x5da35db5c621b198fdae9489b05bf0828152a444c5d5c6fb6aa462f443de5dac)
+- Metadata key: `rpcbeat.analysis.demo`
+- Verified readback:
+  `tokenURI(610)` resolves to the RPCBeat agent metadata URI, and
+  `getMetadata(610, "rpcbeat.analysis.demo")` returns the demo wallet/tx analysis
+  reference.
+
 Agent metadata:
 <https://raw.githubusercontent.com/Ham3798/rpcBeat/main/agent/rpcbeat-agent.json>
 
