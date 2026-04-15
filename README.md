@@ -1,5 +1,9 @@
 # RPCBeat
 
+<p align="center">
+  <img src="Image/rpcBeat.png" alt="RPCBeat logo" width="360">
+</p>
+
 RPCBeat is a trust-minimizing execution context layer for toxic orderflow on BNB.
 
 It does not ask wallets or agents to blindly trust private RPCs, builder paths, or
