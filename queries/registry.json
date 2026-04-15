@@ -1,22 +1,12 @@
 {
   "queries": {
-    "block_trade_mev_share": {
-      "name": "RPCBeat - Block Trade MEV Share",
-      "path": "queries/block_trade_mev_share.sql",
-      "query_id": 6989263
-    },
     "builder_sandwich_exposure": {
       "name": "RPCBeat - Builder Sandwich Exposure",
       "path": "queries/builder_sandwich_exposure.sql",
       "query_id": 6989264
     },
-    "emerging_sandwich_type2": {
-      "name": "RPCBeat - Emerging Sandwich Type 2",
-      "path": "queries/emerging_sandwich_type2.sql",
-      "query_id": 6989265
-    },
     "pair_token_risk": {
-      "name": "RPCBeat - Pair Token Risk",
+      "name": "RPCBeat - Pair Token Sandwich Pressure",
       "path": "queries/pair_token_risk.sql",
       "query_id": 6989266
     },
@@ -25,10 +15,30 @@
       "path": "queries/tx_execution_context.sql",
       "query_id": 6989267
     },
+    "wallet_builder_context": {
+      "name": "RPCBeat - Wallet Builder Context",
+      "path": "queries/wallet_builder_context.sql",
+      "query_id": 6989592
+    },
+    "wallet_gas_sponsorship_context": {
+      "name": "RPCBeat - Wallet Sender and Gasless Candidate Context",
+      "path": "queries/wallet_gas_sponsorship_context.sql",
+      "query_id": 6996090
+    },
     "wallet_mev_exposure": {
       "name": "RPCBeat - Wallet MEV Exposure",
       "path": "queries/wallet_mev_exposure.sql",
       "query_id": 6989268
+    },
+    "wallet_pool_context": {
+      "name": "RPCBeat - Wallet Pool Context",
+      "path": "queries/wallet_pool_context.sql",
+      "query_id": 6989593
+    },
+    "wallet_route_context": {
+      "name": "RPCBeat - Wallet Route Context",
+      "path": "queries/wallet_route_context.sql",
+      "query_id": 7221262
     }
   }
 }

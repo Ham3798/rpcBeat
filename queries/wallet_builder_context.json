@@ -1,0 +1,47 @@
+{
+  "name": "RPCBeat - Wallet Builder Context",
+  "description": "Wallet orderflow distribution across builder-attributed BNB block contexts. Builder labels use candidate PBS builder payment/marker transactions: successful zero-gas transactions to known builder addresses. This does not prove the wallet used that builder, RPC, or gas sponsorship.",
+  "parameters": [
+    {
+      "key": "wallet",
+      "value": "0x5789bcec98243e025d83039f3203b8a7e788e226",
+      "type": "text"
+    },
+    {
+      "key": "start_time",
+      "value": "2026-04-06T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "builder_brand",
+    "builder_attribution_basis",
+    "builder_marker_tx_count",
+    "wallet_blocks",
+    "wallet_txs",
+    "wallet_volume_usd",
+    "wallet_sandwiched_txs",
+    "wallet_sandwiched_volume_usd",
+    "wallet_block_share",
+    "affected_block_share",
+    "attribution_confidence"
+  ],
+  "non_negative_columns": [
+    "wallet_blocks",
+    "wallet_txs",
+    "wallet_volume_usd",
+    "wallet_sandwiched_txs",
+    "wallet_sandwiched_volume_usd",
+    "builder_marker_tx_count"
+  ],
+  "percentage_columns": [
+    "wallet_block_share",
+    "affected_block_share"
+  ],
+  "tags": ["rpcbeat", "bnb", "wallet", "builder", "orderflow"]
+}

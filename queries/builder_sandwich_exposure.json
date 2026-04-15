@@ -1,6 +1,6 @@
 {
   "name": "RPCBeat - Builder Sandwich Exposure",
-  "description": "Builder-level hourly sandwich and sandwiched transaction exposure on BNB.",
+  "description": "Builder-attributed block context for hourly sandwich and sandwiched transaction exposure on BNB. Builder labels use candidate PBS builder payment/marker transactions: successful zero-gas transactions to known builder addresses. This is block-level attribution, not EOA gas sponsorship evidence.",
   "parameters": [
     {
       "key": "start_time",
@@ -16,6 +16,8 @@
   "required_columns": [
     "hour",
     "builder_brand",
+    "builder_attribution_basis",
+    "builder_marker_tx_count",
     "validator_address",
     "validator_confidence",
     "sandwich_tx_count",
@@ -25,7 +27,8 @@
   "non_negative_columns": [
     "sandwich_tx_count",
     "sandwiched_tx_count",
-    "affected_blocks"
+    "affected_blocks",
+    "builder_marker_tx_count"
   ],
   "percentage_columns": [],
   "tags": ["rpcbeat", "bnb", "builder", "mev"]

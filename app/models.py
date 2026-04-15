@@ -30,26 +30,17 @@ class HarmProxy(BaseModel):
     )
 
 
-class RiskScore(BaseModel):
-    score: int = Field(ge=0, le=100)
-    level: RiskLevel
-    components: dict[str, float]
-
-
 class WalletAnalysis(BaseModel):
     wallet: str
     lookback_days: int
-    risk: RiskScore
-    total_dex_txs: int
-    sandwiched_txs: int
-    sandwich_txs: int
-    sandwiched_volume_usd: float
-    estimated_loss: LossEstimate
-    harm_proxy: HarmProxy
+    wallet_orderflow: dict[str, Any]
+    wallet_mev_harm: dict[str, Any]
+    builder_context: dict[str, Any]
+    pool_context: dict[str, Any]
+    validator_context: dict[str, Any]
+    rpc_path_inference: dict[str, Any]
     confidence: float = Field(default=0.35, ge=0.0, le=1.0)
     signal_source: str = "dune_curated_sandwich_tables"
-    top_pairs: list[dict[str, Any]] = Field(default_factory=list)
-    top_tokens: list[dict[str, Any]] = Field(default_factory=list)
     evidence: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -58,8 +49,11 @@ class ExecutionAnalysis(BaseModel):
     classification: str
     block_number: int | None = None
     block_time: datetime | None = None
+    route_class: str | None = None
     builder_brand: str | None = None
     validator_address: str | None = None
+    validator_role_label: str | None = None
+    validator_attribution_basis: str | None = None
     validator_confidence: str = "unknown"
     amount_usd: float = 0.0
     estimated_loss: LossEstimate
@@ -91,10 +85,12 @@ class RouteRecommendation(BaseModel):
     pair: str
     amount: float
     priority: str
-    recommendation: str
-    risk_level: RiskLevel
-    rationale: str
+    advisory: str
+    suggested_actions: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
     confidence: float = Field(default=0.25, ge=0.0, le=1.0)
     signal_source: str = "historical_pair_risk_advisory"
     harm_proxy: HarmProxy = Field(default_factory=HarmProxy)
-    evidence: list[dict[str, Any]] = Field(default_factory=list)
+    pair_context: list[dict[str, Any]] = Field(default_factory=list)
+    builder_context: list[dict[str, Any]] = Field(default_factory=list)
+    evidence: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)

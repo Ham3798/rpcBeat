@@ -44,7 +44,7 @@ class DuneClient:
         self.base_url = base_url.rstrip("/")
         self._client = client or httpx.Client(timeout=timeout_seconds)
         self._owns_client = client is None
-        self._headers = {"X-Dune-API-Key": api_key, "Content-Type": "application/json"}
+        self._headers = {"X-Dune-API-Key": api_key}
 
     def close(self) -> None:
         if self._owns_client:
@@ -102,6 +102,12 @@ class DuneClient:
         if query_parameters:
             payload["parameters"] = [param.as_create_payload() for param in query_parameters]
         return self._request("PATCH", f"/query/{query_id}", json=payload)
+
+    def archive_query(self, query_id: int) -> dict[str, Any]:
+        return self._request("POST", f"/query/{query_id}/archive")
+
+    def private_query(self, query_id: int) -> dict[str, Any]:
+        return self._request("POST", f"/query/{query_id}/private")
 
     def execute_query(
         self,

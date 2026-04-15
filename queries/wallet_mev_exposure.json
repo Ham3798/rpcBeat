@@ -1,6 +1,6 @@
 {
   "name": "RPCBeat - Wallet MEV Exposure",
-  "description": "Wallet-level BNB DEX sandwich exposure summary.",
+  "description": "Wallet-level BNB DEX sandwich exposure summary. Affected notional is not realized loss; builder concentration uses block-level builder payment/marker candidate attribution and does not prove wallet RPC or gas sponsorship.",
   "parameters": [
     {
       "key": "wallet",
@@ -24,18 +24,23 @@
     "sandwich_txs",
     "total_volume_usd",
     "sandwiched_volume_usd",
+    "top_pair_tx_share",
     "high_risk_pair_share",
-    "builder_concentration"
+    "builder_concentration",
+    "builder_attribution_basis",
+    "builder_marker_tx_count"
   ],
   "non_negative_columns": [
     "total_dex_txs",
     "sandwiched_txs",
     "sandwich_txs",
     "total_volume_usd",
-    "sandwiched_volume_usd"
+    "sandwiched_volume_usd",
+    "builder_marker_tx_count"
   ],
   "percentage_columns": [
     "high_risk_pair_share",
+    "top_pair_tx_share",
     "builder_concentration"
   ],
   "tags": ["rpcbeat", "bnb", "wallet", "mev"]

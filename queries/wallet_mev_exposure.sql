@@ -36,15 +36,17 @@ WITH wallet_trades AS (
         AND lower(CAST(t.tx_from AS varchar)) = lower('{{wallet}}')
         AND t.tx_to <> 0x6aba0315493b7e6989041c91181337b662fb1b90
 ),
-builder_blocks AS (
+builder_payment_marker_blocks AS (
     SELECT
         txn.block_number,
-        bld.brand AS builder_brand
+        bld.brand AS builder_brand,
+        COUNT(*) AS builder_marker_tx_count
     FROM bnb.transactions txn
     INNER JOIN dune.bnbchain.dataset_builders_list bld ON txn."to" = bld.address
     WHERE txn.success = true
         AND txn.gas_price = 0
         AND txn.block_number IN (SELECT block_number FROM wallet_trades)
+    GROUP BY 1, 2
 ),
 pair_counts AS (
     SELECT
@@ -64,9 +66,10 @@ top_pair_share AS (
 builder_counts AS (
     SELECT
         bb.builder_brand,
-        COUNT(DISTINCT wt.block_number) AS affected_blocks
+        COUNT(DISTINCT wt.block_number) AS affected_blocks,
+        SUM(bb.builder_marker_tx_count) AS builder_marker_tx_count
     FROM wallet_trades wt
-    INNER JOIN builder_blocks bb ON bb.block_number = wt.block_number
+    INNER JOIN builder_payment_marker_blocks bb ON bb.block_number = wt.block_number
     WHERE wt.trade_type IN ('sandwiched', 'sandwich')
     GROUP BY 1
 ),
@@ -77,6 +80,16 @@ builder_concentration AS (
             0
         ) AS builder_concentration
     FROM builder_counts
+),
+builder_marker_summary AS (
+    SELECT
+        COALESCE(SUM(builder_marker_tx_count), 0) AS builder_marker_tx_count
+    FROM builder_payment_marker_blocks
+    WHERE block_number IN (
+        SELECT DISTINCT block_number
+        FROM wallet_trades
+        WHERE trade_type IN ('sandwiched', 'sandwich')
+    )
 )
 SELECT
     COUNT(DISTINCT tx_hash) AS total_dex_txs,
@@ -84,6 +97,9 @@ SELECT
     COUNT(DISTINCT tx_hash) FILTER (WHERE trade_type = 'sandwich') AS sandwich_txs,
     COALESCE(SUM(amount_usd), 0) AS total_volume_usd,
     COALESCE(SUM(amount_usd) FILTER (WHERE trade_type = 'sandwiched'), 0) AS sandwiched_volume_usd,
+    COALESCE((SELECT high_risk_pair_share FROM top_pair_share), 0) AS top_pair_tx_share,
     COALESCE((SELECT high_risk_pair_share FROM top_pair_share), 0) AS high_risk_pair_share,
-    COALESCE((SELECT builder_concentration FROM builder_concentration), 0) AS builder_concentration
+    COALESCE((SELECT builder_concentration FROM builder_concentration), 0) AS builder_concentration,
+    'zero_gas_tx_to_known_builder_address' AS builder_attribution_basis,
+    COALESCE((SELECT builder_marker_tx_count FROM builder_marker_summary), 0) AS builder_marker_tx_count
 FROM wallet_trades

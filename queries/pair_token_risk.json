@@ -1,6 +1,6 @@
 {
-  "name": "RPCBeat - Pair Token Risk",
-  "description": "Historical BNB sandwiched exposure by token pair or token address.",
+  "name": "RPCBeat - Pair Token Sandwich Pressure",
+  "description": "Historical BNB sandwich pressure by token pair or token address. This is advisory context, not a guaranteed route verdict.",
   "parameters": [
     {
       "key": "start_time",

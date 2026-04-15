@@ -1,0 +1,45 @@
+{
+  "name": "RPCBeat - Wallet Sender and Gasless Candidate Context",
+  "description": "Wallet-level sender and gasless candidate summary for BNB DEX trades. This separates direct sender flow, direct zero-gas wallet transactions, and possible relayed or contract-mediated intent candidates. It does not confirm sponsorship, and builder payment/marker transactions are not used as EOA sponsorship evidence.",
+  "parameters": [
+    {
+      "key": "wallet",
+      "value": "0x5789bcec98243e025d83039f3203b8a7e788e226",
+      "type": "text"
+    },
+    {
+      "key": "start_time",
+      "value": "2026-04-06T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "wallet_txs",
+    "direct_sender_txs",
+    "gasless_direct_sender_txs",
+    "wallet_trade_non_sender_txs",
+    "router_flow_txs",
+    "possible_paymaster_gasless_candidate_txs",
+    "possible_relayed_intent_candidate_txs",
+    "unknown_txs",
+    "sponsorship_observed",
+    "confidence"
+  ],
+  "non_negative_columns": [
+    "wallet_txs",
+    "direct_sender_txs",
+    "gasless_direct_sender_txs",
+    "wallet_trade_non_sender_txs",
+    "router_flow_txs",
+    "possible_paymaster_gasless_candidate_txs",
+    "possible_relayed_intent_candidate_txs",
+    "unknown_txs"
+  ],
+  "percentage_columns": [],
+  "tags": ["rpcbeat", "bnb", "wallet", "gasless-candidate", "path-context"]
+}

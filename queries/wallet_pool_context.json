@@ -1,0 +1,43 @@
+{
+  "name": "RPCBeat - Wallet Pool Context",
+  "description": "Wallet pool exposure with pool-level BNB sandwich pressure. Pool percentages are historical pressure indicators, not LP PnL.",
+  "parameters": [
+    {
+      "key": "wallet",
+      "value": "0x5789bcec98243e025d83039f3203b8a7e788e226",
+      "type": "text"
+    },
+    {
+      "key": "start_time",
+      "value": "2026-04-06T00:00:00+00:00",
+      "type": "text"
+    },
+    {
+      "key": "end_time",
+      "value": "2026-04-13T00:00:00+00:00",
+      "type": "text"
+    }
+  ],
+  "required_columns": [
+    "project",
+    "project_contract_address",
+    "token_pair",
+    "wallet_txs",
+    "wallet_volume_usd",
+    "wallet_sandwiched_txs",
+    "wallet_sandwiched_volume_usd",
+    "pool_sandwiched_transactions_percentage",
+    "pool_sandwiched_volume_percentage"
+  ],
+  "non_negative_columns": [
+    "wallet_txs",
+    "wallet_volume_usd",
+    "wallet_sandwiched_txs",
+    "wallet_sandwiched_volume_usd"
+  ],
+  "percentage_columns": [
+    "pool_sandwiched_transactions_percentage",
+    "pool_sandwiched_volume_percentage"
+  ],
+  "tags": ["rpcbeat", "bnb", "wallet", "pool", "orderflow"]
+}

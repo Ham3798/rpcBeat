@@ -13,8 +13,11 @@ from app.models import (
     RouteRecommendation,
     WalletAnalysis,
 )
-from app.services.dune_queries import DuneQueryRunner, lookback_window
-from app.services.risk import risk_level, wallet_risk_score
+from app.services.dune_queries import (
+    DuneQueryRunner,
+    QueryUnavailable,
+    lookback_window,
+)
 
 
 class AdvisorService:
@@ -27,40 +30,109 @@ class AdvisorService:
             "wallet_mev_exposure",
             {"wallet": wallet, "start_time": start_time, "end_time": end_time},
         )
+        builder_rows, builder_error = self.execute_optional_wallet_query(
+            "wallet_builder_context",
+            {"wallet": wallet, "start_time": start_time, "end_time": end_time},
+        )
+        pool_rows, pool_error = self.execute_optional_wallet_query(
+            "wallet_pool_context",
+            {"wallet": wallet, "start_time": start_time, "end_time": end_time},
+        )
         row = rows[0] if rows else {}
         total_dex_txs = int(row.get("total_dex_txs") or 0)
         sandwiched_txs = int(row.get("sandwiched_txs") or 0)
         sandwich_txs = int(row.get("sandwich_txs") or 0)
         sandwiched_volume_usd = float(row.get("sandwiched_volume_usd") or 0)
         total_volume_usd = float(row.get("total_volume_usd") or 0)
-        high_risk_pair_share = float(row.get("high_risk_pair_share") or 0)
-        builder_concentration = float(row.get("builder_concentration") or 0)
-        risk = wallet_risk_score(
-            total_dex_txs=total_dex_txs,
-            sandwiched_txs=sandwiched_txs,
-            sandwiched_volume_usd=sandwiched_volume_usd,
-            total_volume_usd=total_volume_usd,
-            high_risk_pair_share=high_risk_pair_share,
-            builder_concentration=builder_concentration,
-        )
         return WalletAnalysis(
             wallet=wallet,
             lookback_days=lookback_days,
-            risk=risk,
-            total_dex_txs=total_dex_txs,
-            sandwiched_txs=sandwiched_txs,
-            sandwich_txs=sandwich_txs,
-            sandwiched_volume_usd=sandwiched_volume_usd,
-            estimated_loss=LossEstimate(amount_usd=sandwiched_volume_usd),
-            harm_proxy=HarmProxy(
-                affected_notional_usd=sandwiched_volume_usd,
-                confidence=0.45 if sandwiched_txs else 0.2,
-            ),
+            wallet_orderflow={
+                "total_dex_txs": total_dex_txs,
+                "total_volume_usd": total_volume_usd,
+                "top_projects": summarize_top(pool_rows, "project", "wallet_volume_usd"),
+                "top_pairs": summarize_top(pool_rows, "token_pair", "wallet_volume_usd"),
+                "top_pools": pool_rows[:10],
+            },
+            wallet_mev_harm={
+                "sandwiched_txs": sandwiched_txs,
+                "sandwiched_tx_ratio": safe_ratio(sandwiched_txs, total_dex_txs),
+                "sandwich_actor_txs": sandwich_txs,
+                "sandwiched_volume_usd": sandwiched_volume_usd,
+                "sandwiched_volume_ratio": safe_ratio(sandwiched_volume_usd, total_volume_usd),
+                "harm_proxy": HarmProxy(
+                    affected_notional_usd=sandwiched_volume_usd,
+                    confidence=0.45 if sandwiched_txs else 0.2,
+                ).model_dump(mode="json"),
+                "affected_tx_samples": rows[:20],
+            },
+            builder_context={
+                "available": builder_error is None,
+                "confidence": "attributed" if builder_error is None else "unknown",
+                "wallet_builder_distribution": builder_rows,
+                "affected_builder_distribution": [
+                    item
+                    for item in builder_rows
+                    if float(item.get("affected_block_share") or 0) > 0
+                ],
+                "global_builder_baseline": [],
+                "error": builder_error,
+            },
+            pool_context={
+                "available": pool_error is None,
+                "confidence": "observed" if pool_error is None else "unknown",
+                "wallet_pool_exposure": pool_rows,
+                "error": pool_error,
+            },
+            validator_context={
+                "available": False,
+                "confidence": "unknown",
+                "validator_role_label": "block_miner_or_proposer",
+                "validator_attribution_basis": "bnb.blocks.miner",
+                "reason": "Wallet-level validator distribution is intentionally out of v1 core.",
+                "limitations": [
+                    (
+                        "Validator/proposer context is exposed at tx/block level through "
+                        "tx_execution_context."
+                    ),
+                    (
+                        "It does not prove validator intent, causality, RPC provider, "
+                        "or private relay path."
+                    ),
+                ],
+            },
+            rpc_path_inference={
+                "rpc_provider_observed": False,
+                "confidence": "inferred",
+                "inference_basis": [
+                    "wallet builder distribution",
+                    "affected block clustering",
+                    "pool-level sandwich pressure",
+                    "wallet historical sandwich outcomes",
+                ],
+                "limitations": [
+                    "RPC provider identity is not directly observable on-chain.",
+                    "Private relay admission and builder-proxy latency are not visible.",
+                    "The response is advisory context, not path ground truth.",
+                ],
+                "questions_for_llm": [
+                    "Is this wallet concentrated in a small set of builder contexts?",
+                    "Did the wallet experience observed sandwiched flow?",
+                    "Are the wallet's main pools historically sandwich-prone?",
+                    "Does the available evidence justify changing execution path candidates?",
+                ],
+            },
             confidence=0.45 if total_dex_txs else 0.2,
             signal_source="dune_curated_sandwich_tables_with_inferred_builder_context",
-            top_pairs=coerce_list(row.get("top_pairs")),
-            top_tokens=coerce_list(row.get("top_tokens")),
-            evidence=rows[:20],
+            evidence=[
+                {"query_key": "wallet_mev_exposure", "rows": rows[:20]},
+                {
+                    "query_key": "wallet_builder_context",
+                    "rows": builder_rows[:20],
+                    "error": builder_error,
+                },
+                {"query_key": "wallet_pool_context", "rows": pool_rows[:20], "error": pool_error},
+            ],
         )
 
     def analyze_execution(self, tx_hash: str) -> ExecutionAnalysis:
@@ -79,8 +151,11 @@ class AdvisorService:
             classification=classification,
             block_number=maybe_int(row.get("block_number")),
             block_time=row.get("block_time"),
+            route_class=row.get("route_class"),
             builder_brand=row.get("builder_brand"),
             validator_address=row.get("validator_address"),
+            validator_role_label=row.get("validator_role_label"),
+            validator_attribution_basis=row.get("validator_attribution_basis"),
             validator_confidence=str(row.get("validator_confidence") or "unknown"),
             amount_usd=amount_usd,
             estimated_loss=LossEstimate(amount_usd=loss_amount),
@@ -153,49 +228,108 @@ class AdvisorService:
         priority: str = "safe",
     ) -> RouteRecommendation:
         pair_risk = self.get_pair_risk(pair, lookback_days=30)
-        worst_ratio = max(
-            (float(row.get("sandwiched_transactions_percentage") or 0) for row in pair_risk.rows),
+        builder_exposure = self.get_builder_mev_exposure(lookback_days=7)
+        worst_pair_ratio = max(
+            (
+                float(row.get("sandwiched_transactions_percentage") or 0)
+                for row in pair_risk.rows
+            ),
             default=0.0,
         )
-        score = round(worst_ratio * 100)
-        level = risk_level(score)
-        if level in {RiskLevel.high, RiskLevel.critical}:
-            recommendation = "Use a lower-exposure execution path candidate or delay execution."
-        elif level == RiskLevel.medium:
-            recommendation = (
-                "Prefer private/low-latency path candidates and reduce slippage tolerance."
-            )
-        else:
-            recommendation = (
-                "Historical pair risk is low; standard execution path candidates are acceptable."
-            )
-        rationale = (
-            "This is an advisory based on historical Dune observations, "
-            "not a live routing guarantee. "
-            "RPC provider attribution is not directly observable on-chain."
+        high_builder_rows = [
+            row
+            for row in builder_exposure.rows
+            if int(row.get("sandwich_tx_count") or 0)
+            + int(row.get("sandwiched_tx_count") or 0)
+            > 0
+        ]
+        advisory = (
+            "Use the returned pair and builder metrics as execution-path context. "
+            "The agent should compare pair sandwich pressure, recent builder exposure, "
+            "trade size, and user slippage constraints before selecting a path candidate."
         )
         return RouteRecommendation(
             pair=pair,
             amount=amount,
             priority=priority,
-            recommendation=recommendation,
-            risk_level=level,
-            rationale=rationale,
+            advisory=advisory,
+            suggested_actions=suggested_route_actions(worst_pair_ratio, high_builder_rows),
+            limitations=[
+                "This is not a live routing guarantee.",
+                "RPC provider attribution is not directly observable on-chain.",
+                "Pool state and mempool conditions can change after historical Dune observations.",
+            ],
             confidence=0.3,
-            signal_source="historical_pair_sandwiched_share_inferred_route_advisory",
+            signal_source="historical_pair_and_builder_exposure_inferred_route_advisory",
             harm_proxy=HarmProxy(
                 affected_notional_usd=0,
                 method="route_advisory_risk_no_live_counterfactual",
                 confidence=0.3,
             ),
-            evidence=pair_risk.rows[:20],
+            pair_context=pair_risk.rows[:20],
+            builder_context=high_builder_rows[:20],
+            evidence={
+                "pair_token_risk": pair_risk.rows[:20],
+                "builder_sandwich_exposure": high_builder_rows[:20],
+            },
         )
 
+    def execute_optional_wallet_query(
+        self,
+        key: str,
+        parameters: dict[str, Any],
+    ) -> tuple[list[dict[str, Any]], str | None]:
+        try:
+            return self.runner.execute_registered_query(key, parameters), None
+        except QueryUnavailable as exc:
+            return [], str(exc)
 
-def coerce_list(value: Any) -> list[dict[str, Any]]:
-    if isinstance(value, list):
-        return [item for item in value if isinstance(item, dict)]
-    return []
+
+def safe_ratio(numerator: float, denominator: float) -> float:
+    if denominator <= 0:
+        return 0.0
+    return numerator / denominator
+
+
+def summarize_top(
+    rows: list[dict[str, Any]],
+    key: str,
+    value_key: str,
+    *,
+    limit: int = 10,
+) -> list[dict[str, Any]]:
+    totals: dict[str, float] = {}
+    counts: dict[str, int] = {}
+    for row in rows:
+        name = str(row.get(key) or "unknown")
+        totals[name] = totals.get(name, 0.0) + float(row.get(value_key) or 0)
+        counts[name] = counts.get(name, 0) + int(row.get("wallet_txs") or 0)
+    return [
+        {key: name, value_key: total, "wallet_txs": counts.get(name, 0)}
+        for name, total in sorted(totals.items(), key=lambda item: item[1], reverse=True)[
+            :limit
+        ]
+    ]
+
+
+def suggested_route_actions(
+    worst_pair_ratio: float,
+    high_builder_rows: list[dict[str, Any]],
+) -> list[str]:
+    actions = [
+        "Inspect pair-level sandwiched transaction and volume percentages.",
+        "Compare recent builder exposure before selecting an execution path candidate.",
+    ]
+    if worst_pair_ratio > 0:
+        actions.append("Consider tighter slippage, smaller order chunks, or delayed execution.")
+    if high_builder_rows:
+        actions.append(
+            "Avoid over-relying on any single opaque path without fresh execution evidence."
+        )
+    actions.append(
+        "Treat RPC path quality as inferred unless the transaction is submitted through RPCBeat."
+    )
+    return actions
 
 
 def maybe_int(value: Any) -> int | None:

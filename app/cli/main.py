@@ -49,8 +49,20 @@ def sync_queries() -> None:
         typer.echo("No SQL definitions found in queries/.")
         raise typer.Exit(code=1)
 
+    existing_definitions: list[QueryDefinition] = []
+    new_definitions: list[QueryDefinition] = []
+    for definition in definitions:
+        if reg.get_query_id(definition.key):
+            existing_definitions.append(definition)
+        else:
+            new_definitions.append(definition)
+
+    new_definitions.sort(
+        key=lambda definition: ("research" in definition.path.parts, definition.key)
+    )
+
     with require_client() as client:
-        for definition in definitions:
+        for definition in [*existing_definitions, *new_definitions]:
             existing_id = reg.get_query_id(definition.key)
             if existing_id:
                 client.update_query(
@@ -310,17 +322,37 @@ def default_canary_payload(start_time: str, end_time: str) -> dict[str, Any]:
             "start_time": start_time,
             "end_time": end_time,
         },
+        "wallet_builder_context": {
+            "wallet": "0x0000000000000000000000000000000000000000",
+            "start_time": start_time,
+            "end_time": end_time,
+        },
+        "wallet_pool_context": {
+            "wallet": "0x0000000000000000000000000000000000000000",
+            "start_time": start_time,
+            "end_time": end_time,
+        },
+        "wallet_route_context": {
+            "wallet": "0x0000000000000000000000000000000000000000",
+            "start_time": start_time,
+            "end_time": end_time,
+        },
+        "wallet_gas_sponsorship_context": {
+            "wallet": "0x0000000000000000000000000000000000000000",
+            "start_time": start_time,
+            "end_time": end_time,
+        },
         "tx_execution_context": {
-            "tx_hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+            "tx_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "start_time": start_time,
+            "end_time": end_time,
         },
         "builder_sandwich_exposure": {"start_time": start_time, "end_time": end_time},
-        "block_trade_mev_share": {"start_time": start_time, "end_time": end_time},
         "pair_token_risk": {
             "start_time": start_time,
             "end_time": end_time,
             "token_pair_or_addresses": "WBNB-USDT",
         },
-        "emerging_sandwich_type2": {"start_time": start_time, "end_time": end_time},
     }
 
 

@@ -19,7 +19,11 @@ package-lock.json
 pnpm-lock.yaml
 yarn.lock
 slides.md
+slides-export.*
+*.pptx
 docs/
 
 evals/runs/
 evals/improvement_prompt.md
+
+queries/archive/

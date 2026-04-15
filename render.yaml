@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: rpcbeat-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DUNE_API_KEY
+        sync: false
+      - key: RPCBEAT_DUNE_PRIVATE
+        value: "true"
+      - key: RPCBEAT_DEFAULT_LOOKBACK_DAYS
+        value: "30"
+      - key: RPCBEAT_MAX_RESULT_ROWS
+        value: "5000"

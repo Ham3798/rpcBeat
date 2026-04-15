@@ -1,6 +1,6 @@
 {
   "name": "RPCBeat - Transaction Execution Context",
-  "description": "Transaction-level BNB DEX trade classification and builder context.",
+  "description": "Core transaction-level BNB DEX forensic query. Returns route class, sandwich classification, builder-attributed block context, and miner/proposer block context from bnb.blocks.miner. RPC provider identity is not observed.",
   "parameters": [
     {
       "key": "tx_hash",
@@ -22,12 +22,17 @@
     "block_time",
     "block_number",
     "tx_hash",
+    "route_class",
     "classification",
     "amount_usd",
+    "builder_attribution_basis",
+    "builder_marker_tx_count",
     "validator_address",
+    "validator_role_label",
+    "validator_attribution_basis",
     "validator_confidence"
   ],
-  "non_negative_columns": ["amount_usd"],
+  "non_negative_columns": ["amount_usd", "builder_marker_tx_count"],
   "percentage_columns": [],
   "tags": ["rpcbeat", "bnb", "tx", "mev"]
 }

@@ -40,7 +40,9 @@ class QueryRegistry:
 
     def load_definitions(self) -> list[QueryDefinition]:
         definitions: list[QueryDefinition] = []
-        for path in sorted(self.query_dir.glob("*.sql")):
+        for path in sorted(self.query_dir.rglob("*.sql")):
+            if "archive" in path.parts:
+                continue
             metadata_path = path.with_suffix(".json")
             metadata = {}
             if metadata_path.exists():
