@@ -4,8 +4,7 @@
   <img src="Image/rpcBeat.png" alt="RPCBeat logo" width="360">
 </p>
 
-RPCBeat is an ERC-8004-registered, trust-minimizing execution context layer for
-toxic orderflow on BNB.
+RPCBeat is an ERC-8004-registered, trust-minimizing execution context layer on BNB.
 
 It does not ask wallets or agents to blindly trust private RPCs, builder paths, or
 opaque routing claims. Instead, RPCBeat turns observed BNB execution outcomes into
